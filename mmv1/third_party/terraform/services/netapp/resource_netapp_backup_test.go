@@ -378,7 +378,12 @@ func TestAccNetappBackup_NetappImmutableBackup(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"labels", "location", "name", "terraform_labels", "vault_name"},
 			},
 			{
-				Config: testAccNetappBackup_ImmutableBackupUpdate(context),
+				Config: testAccNetappBackup_CrossRegionBackupUpdate(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_netapp_backup.test_backup", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_netapp_backup.test_backup",
@@ -548,6 +553,11 @@ func TestAccNetappBackup_NetappCrossRegionBackup(t *testing.T) {
 			},
 			{
 				Config: testAccNetappBackup_CrossRegionBackupUpdate(context),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("google_netapp_backup.test_backup", plancheck.ResourceActionUpdate),
+					},
+				},
 			},
 			{
 				ResourceName:            "google_netapp_backup.test_backup",
